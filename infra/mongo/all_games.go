@@ -55,3 +55,16 @@ func (a AllGames) Remove(game *domain.Game) {
 	defer cancel()
 	_, _ = a.coll.DeleteOne(ctx, bson.D{{"_id", game.Id}})
 }
+
+func (a AllGames) By(id domain.GameId) *domain.Game {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	var res bson.M
+	err := a.coll.FindOne(ctx, bson.D{{"_id", id}}).Decode(&res)
+	if err == mongo.ErrNoDocuments {
+		return nil
+	} else if err != nil {
+		log.Fatal(err)
+	}
+	return toDomain(res)
+}
