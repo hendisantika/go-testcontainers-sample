@@ -49,3 +49,9 @@ func (a AllGames) Add(game *domain.Game) {
 		log.Println(err)
 	}
 }
+
+func (a AllGames) Remove(game *domain.Game) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, _ = a.coll.DeleteOne(ctx, bson.D{{"_id", game.Id}})
+}
