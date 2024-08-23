@@ -2,6 +2,7 @@ package infra
 
 import (
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 	"go-testcontainers-sample/domain"
 	"testing"
 )
