@@ -1,6 +1,9 @@
 package mem
 
-import "sync"
+import (
+	"go-testcontainers-sample/domain"
+	"sync"
+)
 
 type AllGames struct {
 	db sync.Map
@@ -8,4 +11,12 @@ type AllGames struct {
 
 func NewAllGames() *AllGames {
 	return &AllGames{db: sync.Map{}}
+}
+
+func (a *AllGames) All() (allGames []*domain.Game) {
+	a.db.Range(func(key, value interface{}) bool {
+		allGames = append(allGames, value.(*domain.Game))
+		return true
+	})
+	return
 }
