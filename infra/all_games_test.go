@@ -40,3 +40,23 @@ func Test_Replace(t *testing.T) {
 	assert.Equal(t, "Rainbow Six Siege", game.Title)
 	assert.Equal(t, domain.Eighteen, game.PEGI)
 }
+
+func Test_By(t *testing.T) {
+	gameId := domain.GameId(uuid.NewString())
+	allGames.Add(&domain.Game{
+		Id:    gameId,
+		Title: "Just Dance 2022",
+		PEGI:  domain.Three,
+	})
+	allGames.Add(&domain.Game{
+		Id:    domain.GameId(uuid.NewString()),
+		Title: "Far Cry 6",
+		PEGI:  domain.Eighteen,
+	})
+
+	game := allGames.By(gameId)
+
+	assert.Equal(t, gameId, game.Id)
+	assert.Equal(t, "Just Dance 2022", game.Title)
+	assert.Equal(t, domain.Three, game.PEGI)
+}
