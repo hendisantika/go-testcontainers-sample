@@ -24,3 +24,7 @@ func (a *AllGames) All() (allGames []*domain.Game) {
 func (a *AllGames) Add(game *domain.Game) {
 	a.db.Store(game.Id, game)
 }
+
+func (a *AllGames) Remove(game *domain.Game) {
+	a.db.Delete(game.Id)
+}
