@@ -28,3 +28,10 @@ func (a *AllGames) Add(game *domain.Game) {
 func (a *AllGames) Remove(game *domain.Game) {
 	a.db.Delete(game.Id)
 }
+
+func (a *AllGames) By(id domain.GameId) *domain.Game {
+	if game, present := a.db.Load(id); present {
+		return game.(*domain.Game)
+	}
+	return nil
+}
