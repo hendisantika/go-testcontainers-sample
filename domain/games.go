@@ -16,3 +16,10 @@ type Game struct {
 	Title string
 	PEGI  PEGI
 }
+
+type AllGames interface {
+	All() []*Game
+	Add(*Game)
+	Remove(*Game)
+	By(GameId) *Game
+}
