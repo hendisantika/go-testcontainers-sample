@@ -1,6 +1,9 @@
 package infra
 
-import "go-testcontainers-sample/domain"
+import (
+	"github.com/testcontainers/testcontainers-go"
+	"go-testcontainers-sample/domain"
+)
 
 type image struct {
 	name string
@@ -15,3 +18,8 @@ var (
 		port: "27017",
 	}
 )
+
+type container struct {
+	testcontainers.Container
+	URI string
+}
