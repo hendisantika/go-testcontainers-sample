@@ -60,3 +60,14 @@ func Test_By(t *testing.T) {
 	assert.Equal(t, "Just Dance 2022", game.Title)
 	assert.Equal(t, domain.Three, game.PEGI)
 }
+
+func Test_All(t *testing.T) {
+	previous := len(allGames.All())
+	allGames.Add(&domain.Game{
+		Id:    domain.GameId(uuid.NewString()),
+		Title: "Far Cry 6",
+		PEGI:  domain.Eighteen,
+	})
+
+	assert.Equal(t, previous+1, len(allGames.All()))
+}
