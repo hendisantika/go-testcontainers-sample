@@ -60,3 +60,11 @@ func TestMain(m *testing.M) {
 
 	code = m.Run()
 }
+
+func setup(ctx context.Context, image image) (*container, error) {
+	cont, uri, err := prepareContainer(ctx, image)
+	if err != nil {
+		return nil, err
+	}
+	return &container{Container: cont, URI: uri}, nil
+}
