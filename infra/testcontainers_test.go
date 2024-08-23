@@ -2,7 +2,11 @@ package infra
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"github.com/docker/go-connections/nat"
 	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 	"go-testcontainers-sample/domain"
 	"go-testcontainers-sample/infra/mem"
 	"go-testcontainers-sample/infra/mongo"
@@ -22,7 +26,7 @@ var (
 	allGames domain.AllGames
 
 	mongoDB = image{
-		name: "mongo:5.0.8",
+		name: "mongo:7.0.14-rc0-jammy",
 		port: "27017",
 	}
 )
@@ -67,4 +71,41 @@ func setup(ctx context.Context, image image) (*container, error) {
 		return nil, err
 	}
 	return &container{Container: cont, URI: uri}, nil
+}
+
+func prepareContainer(ctx context.Context, image image) (testcontainers.Container, string, error) {
+	req := testcontainers.ContainerRequest{
+		Image:        image.name,
+		ExposedPorts: []string{image.port + "/tcp"},
+		WaitingFor:   wait.ForListeningPort(nat.Port(image.port)),
+	}
+
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	if err != nil {
+		return nil, "", err
+	}
+
+	hostIP, err := container.Host(ctx)
+	if err != nil {
+		return nil, "", err
+	}
+
+	mappedPort, err := container.MappedPort(ctx, nat.Port(image.port))
+	if err != nil {
+		return nil, "", err
+	}
+
+	var uri string
+	switch image {
+	case mongoDB:
+		uri = fmt.Sprintf("mongodb://%s:%s", hostIP, mappedPort.Port())
+	default:
+		return nil, "", errors.New("TestContainers: unsupported image: " + image.name)
+	}
+
+	log.Printf("TestContainers: container %s is now running at %s\n", req.Image, uri)
+	return container, uri, nil
 }
