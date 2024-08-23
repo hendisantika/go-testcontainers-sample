@@ -68,3 +68,11 @@ func (a AllGames) By(id domain.GameId) *domain.Game {
 	}
 	return toDomain(res)
 }
+
+func toDomain(res bson.M) *domain.Game {
+	return &domain.Game{
+		Id:    domain.GameId(res["_id"].(string)),
+		Title: res["title"].(string),
+		PEGI:  domain.PEGI(res["PEGI"].(int32)),
+	}
+}
