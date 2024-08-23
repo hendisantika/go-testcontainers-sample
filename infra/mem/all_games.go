@@ -20,3 +20,7 @@ func (a *AllGames) All() (allGames []*domain.Game) {
 	})
 	return
 }
+
+func (a *AllGames) Add(game *domain.Game) {
+	a.db.Store(game.Id, game)
+}
