@@ -16,6 +16,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup Testcontainers Cloud Client
+      uses: atomicjar/testcontainers-cloud-setup-action@v1
+      with:
+        token: ${{ secrets.TC_CLOUD_TOKEN }}
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
