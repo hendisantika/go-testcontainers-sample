@@ -5,6 +5,7 @@ import (
 	"go-testcontainers-sample/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
 )
@@ -35,4 +36,16 @@ func (a AllGames) All() []*domain.Game {
 		allGames = append(allGames, toDomain(game))
 	}
 	return allGames
+}
+
+func (a AllGames) Add(game *domain.Game) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := a.coll.ReplaceOne(ctx, bson.D{{"_id", game.Id}}, bson.D{
+		{"title", game.Title},
+		{"PEGI", game.PEGI},
+	}, options.Replace().SetUpsert(true))
+	if err != nil {
+		log.Println(err)
+	}
 }
